@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('checkout') {
             steps {
-                git branch 'main', url: 'https://github.com/NIRANJAN-Sjpg/flask_todo'
+                git branch: 'main', url: 'https://github.com/NIRANJAN-Sjpg/flask_todo'
             }
         }
 
@@ -22,7 +22,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'docker',usernameVariable: 'DOCKER_USER',passwordVariable: 'DOCKER_PASS)]){
                                                   bat """
                                                  echo %DOCKER_PASS% |
-                                                 docker login -u %docker_user% --password-stdin
+                                                 docker login -u %DOCKER_USER% --password-stdin
                                                  docker push %IMAGE_NAME%:latest
                                                  docker logout
                                                  ___
