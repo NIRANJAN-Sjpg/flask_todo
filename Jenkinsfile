@@ -1,23 +1,33 @@
 pipeline {
-    agent any   // Run on any available agent
-
+    agent any
+    evironment{
+        IMAGE_NAME ='ninja1234567/flask_todo'
+    }
     stages {
-        stage('Build') {
+        stage('checkout') {
             steps {
-                echo 'Building the project...'
+                git branch 'main', url: 'https://github.com/NIRANJAN-Sjpg/flask_todo'
             }
         }
 
-        stage('Test') {
+        stage('build docker image') {
             steps {
-                echo 'Running tests...'
+                bat "docker build -t %IMAGE_NAME%:LATEST ."
+                
             }
         }
 
-        stage('Deploy') {
+        stage('PUSH') {
             steps {
-                echo 'Deploying a...'
+                withCredentials([usernamePassword(credentialsId: 'docker',usernameVariable: 'DOCKER_USER',passwordVariable: 'DOCKER_PASS)]){
+                                                  bat """
+                                                 echo %DOCKER_PASS% |
+                                                 docker login -u %docker_user% --password-stdin
+                                                 docker push %IMAGE_NAME%:latest
+                                                 docker logout
+                                                 ___
             }
         }
     }
+}
 }
